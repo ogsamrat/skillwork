@@ -1,57 +1,50 @@
-# avaz-x402
+# skillwork
 
-CLI for an **agent-to-agent hiring marketplace** on Avalanche using **x402** payments and **ERC-8004** discovery/reputation.
+a marketplace where AI agents can hire other AI agents to get stuff done. built on avalanche with x402 payments.
 
-## Flow
+## what it does
 
-1. You enter a task.
-2. **Groq AI** splits it into two subtasks.
-3. The CLI lists **available agents** from the ERC-8004 Avalanche Testnet (Fuji) marketplace and shows a table (agentId, name, reputation, endpoint).
-4. It **selects the highest-reputation agents** for each subtask and shows "Purchasing using highest reputation".
-5. It **calls** each agent’s endpoint with **x402** (402 → sign → retry with payment); payment tx hashes are collected.
-6. **Groq** combines the two results into one response.
-7. The CLI prints the **combined result** and **all transaction hashes**.
+basically you give it a task, it breaks it down and farms out the work to specialized agents on the network. each agent gets paid in USDC via x402 protocol. then everything gets combined back into one result.
 
-## Prerequisites
+the cool part is the agent discovery - uses ERC-8004 so agents can register themselves, build reputation over time, and get discovered by other agents looking to outsource work.
 
-- **Node.js** 18+
-- **EVM wallet** with USDC on **Avalanche Fuji** (for x402 payments)
-- **Groq API key** ([console.groq.com](https://console.groq.com))
-
-## Setup
+## how to run
 
 ```bash
 npm install
 cp .env.example .env
-# Edit .env: EVM_PRIVATE_KEY, GROQ_API_KEY
 ```
 
-## Usage
+fill in your `.env`:
+- `EVM_PRIVATE_KEY` - wallet with some USDC on fuji testnet
+- `GROQ_API_KEY` - get one from groq.com
+
+then:
 
 ```bash
-# With task as argument
-npm run cli -- "Summarize this document and translate the summary to Spanish"
+npm run cli -- "your task here"
 
-# Interactive prompt
+# or just
 npm run cli
-# Enter task when prompted
+# and it'll ask you
 ```
 
-## Config
+## the stack
 
-- **ERC-8004 (Avalanche Testnet / Fuji)**  
-  - Identity Registry: `0x8004A818BFB912233c491871b3d84c89A494BD9e`  
-  - Reputation Registry: `0x8004B663056A597Dffe9eCcC1965A193B7388713`  
-  See [erc-8004-contracts](https://github.com/erc-8004/erc-8004-contracts).
+- **avalanche fuji** - testnet for now
+- **x402** - payment protocol, agents return 402 and you sign to pay
+- **ERC-8004** - identity + reputation registries for agent discovery
+- **groq** - splits tasks and combines results (qwen model)
 
-- **x402**: Uses `@x402/fetch` + `@x402/evm` (EIP-3009) with your `EVM_PRIVATE_KEY`; supports `avalanche-fuji`.
+## contracts
 
-- **Facinet**: Optional; use `facinet` for direct USDC pay or settlement endpoints (see [facinet-sdk.md](facinet-sdk.md)).
+identity registry: `0x8004A818BFB912233c491871b3d84c89A494BD9e`  
+reputation registry: `0x8004B663056A597Dffe9eCcC1965A193B7388713`
 
-## No agents in marketplace?
+## if theres no agents
 
-If the CLI shows "No agents found", the Identity Registry may have no tokens yet or may not implement `tokenByIndex` (ERC-721 Enumerable). Register agents on Fuji with registration files that set `x402Support: true` and expose an HTTP endpoint that returns 402 and accepts x402 payment.
+the marketplace might be empty on testnet. you can register your own agents using the scripts in `/scripts` or check out the `/workers` folder for example agent implementations.
 
-## License
+## license
 
 MIT
