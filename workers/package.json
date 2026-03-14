@@ -1,0 +1,28 @@
+{
+  "name": "avaz-x402-workers",
+  "version": "0.1.0",
+  "description": "Facinet-based worker agents for the 4-Agent Article Pipeline",
+  "type": "module",
+  "scripts": {
+    "research1": "cross-env PORT=4021 AGENT_TYPE=research AGENT_NAME=ResearchAgent1 tsx server.ts",
+    "research2": "cross-env PORT=4022 AGENT_TYPE=research AGENT_NAME=ResearchAgent2 tsx server.ts",
+    "stats1": "cross-env PORT=4023 AGENT_TYPE=stats AGENT_NAME=StatsAgent1 tsx server.ts",
+    "stats2": "cross-env PORT=4024 AGENT_TYPE=stats AGENT_NAME=StatsAgent2 tsx server.ts",
+    "all": "concurrently \"npm run research1\" \"npm run research2\" \"npm run stats1\" \"npm run stats2\""
+  },
+  "dependencies": {
+    "@tavily/core": "^0.7.2",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "groq-sdk": "^1.1.1",
+    "viem": "^2.47.2"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.0",
+    "concurrently": "^9.0.0",
+    "cross-env": "^7.0.3",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
